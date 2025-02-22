@@ -13,15 +13,20 @@ import PieChartTotal from "@/components/pie-chart";
 import { Button } from "@/components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
-
+import { useSession } from "next-auth/react";
 export default function Home() {
-  const [user, setUser] = React.useState(null);
-  // React.useEffect(() => {
-  //   setUser();
-  // }, []);
-  let userName = "Guest";
+  const { data: session } = useSession();
+  console.log(session?.user);
+
+  let donationUrl = "https://localhost:3000/dashboard/donate";
+  let userName = session?.user?.name || "Guest";
+
   let referal = "123456";
   let totalAmount = 1000;
+  const message = `Hey! Please donate on this link ${donationUrl}?referal=${referal} or my reference code ${referal}`;
+  const encodedMessage = encodeURIComponent(message);
+  const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
+
   return (
     <>
       <div
@@ -64,17 +69,29 @@ export default function Home() {
           <p className="mt-2">Goal Achieved {totalAmount}</p>
           <p>Total Goal 10000</p>
 
-          <Button className="m-auto">
+          <Button
+            onClick={() => window.open(whatsappUrl, "_blank")}
+            className="m-auto"
+          >
             <FontAwesomeIcon icon={faWhatsapp} />
             Share on Whatsapp
           </Button>
         </div>
         <div className="flex flex-col w-1/2 m-16 items-center">
-          <h2 className="text-xl mb-2">Level Achieved : Star</h2>
+          <h2 className="text-xl mb-4">Level Achieved : Star</h2>
           <Separator orientation="horizontal" className="h-2" />
           <div className="mt-8 flex flex-row gap-4">
             <Button>Rewards</Button>
-            <Button>Copy Invite Link</Button>
+            <Button
+              onClick={() => {
+                navigator.clipboard.writeText(
+                  `${donationUrl}?referal=${referal}`
+                );
+                alert("Link Copied");
+              }}
+            >
+              Copy Donation Link
+            </Button>
           </div>
           <p className="italic my-4">Unlock ninja at 5000</p>
           <h2 className="text-xl">
@@ -86,7 +103,7 @@ export default function Home() {
           />
 
           <h2 className="text-xl">
-            <span className="text-red-600">Reference Code </span>
+            <span className="text-red-600">Reference Code</span>
             {referal}
           </h2>
           <Button className="mt-4">Donate Here</Button>

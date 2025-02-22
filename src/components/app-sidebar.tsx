@@ -1,3 +1,4 @@
+'use client'
 import {
   ShieldQuestion,
   Home,
@@ -19,6 +20,8 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { NavUser } from "@/components/nav-user";
+import { doSocialLogin } from "@/app/actions";
+import { useSession } from "next-auth/react";
 // Menu items.
 const items = [
   {
@@ -47,19 +50,33 @@ const items = [
     icon: BookMarked,
   },
 ];
-const data = {
-  user: {
-    name: "John Doe",
-    email: "",
-    avatar: "./avatar.png",
-  },
-};
+
 type AppSidebarProps = {
   isLogin: boolean;
 };
-
+type data = {
+  user: {
+    name: string;
+    email: string;
+    image: string;
+  };
+};
 //AppSidebar component with props
-export function AppSidebar({ isLogin, ...props }: AppSidebarProps) {
+export function AppSidebar() {
+  const session = useSession();
+  
+  const [data, setData] = React.useState<data | null>(null);
+  React.useEffect(() => {
+    if (session.data) {
+      setData(session.data);
+    }
+  }, [session.data]);
+ const [isLogin, setIsLogin] = React.useState(false);
+  React.useEffect(() => {
+    if (session.data) {
+      setIsLogin(true);
+    }
+  }, [session.data]);
   return (
     <Sidebar>
       <SidebarContent className="bg-[#C7DB9C]">
@@ -84,9 +101,13 @@ export function AppSidebar({ isLogin, ...props }: AppSidebarProps) {
       </SidebarContent>
       <SidebarFooter className="bg-[#C7DB9C]">
         {isLogin ? (
-          <NavUser user={data.user} />
+          <NavUser user={data.user} setLogin={setIsLogin}/>
         ) : (
-          <Button variant="outline" className="w-full mb-8">
+          <Button
+            onClick={doSocialLogin}
+            variant="outline"
+            className="w-full mb-8"
+          >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <path
                 d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
