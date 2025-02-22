@@ -1,11 +1,10 @@
-
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/app-sidebar"
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
 import React from "react";
-import {isLogin} from "@/api/user/isLogin"
+import { isLogin } from "@/api/user/isLogin";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -26,19 +25,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // const [isLogin, setIsLogin] = React.useState(false);
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <SidebarProvider>
-      <AppSidebar isLogin={isLogin()}/>
-      <main>
-        <SidebarTrigger className="mt-4"/>
-        {children}
-      </main>
-    </SidebarProvider>
+          <AppSidebar isLogin={isLogin()} />
+          <main className="w-screen">{children}</main>
+        </SidebarProvider>
       </body>
     </html>
   );
