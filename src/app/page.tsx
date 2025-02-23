@@ -14,14 +14,69 @@ import { Button } from "@/components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 import { useSession } from "next-auth/react";
+// import { useRouter } from "next/navigation";
+
+interface User {
+  _id: string;
+  name: string;
+  email: string;
+  createdAt: string;
+  referalCode: string;
+  __v: number;
+}
+
 export default function Home() {
+  // const router = useRouter();
   const { data: session } = useSession();
-  console.log(session?.user);
 
-  let donationUrl = "https://localhost:3000/dashboard/donate";
+  const [user, setUser] = React.useState<User | null>(null);
+
+  // const getUser = async () => {
+  //   try {
+  //     console.log(session?.user?.email);
+
+  //     const response = await axios.get(`/api/user}`, {
+  //       method: "GET",
+  //       params:{
+  //         email:session?.user?.email
+  //       }
+  //     });
+  //     const data = await response.data;
+  //     console.log(data);
+
+  //     setUser(data);
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
+
+  const createUser = async () => {
+    try {
+      const response = await fetch("/api/user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(session?.user),
+      });
+      const data = await response.json();
+      setUser(data.user);
+      console.log(data.user);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  React.useEffect(() => {
+    createUser();
+  }, [session]);
+
+  let donationUrl = "localhost:3000/donate";
   let userName = session?.user?.name || "Guest";
-
   let referal = "123456";
+  if (user) {
+    referal = user.referalCode;
+  }
   let totalAmount = 1000;
   const message = `Hey! Please donate on this link ${donationUrl}?referal=${referal} or my reference code ${referal}`;
   const encodedMessage = encodeURIComponent(message);
@@ -103,10 +158,12 @@ export default function Home() {
           />
 
           <h2 className="text-xl">
-            <span className="text-red-600">Reference Code</span>
+            <span className="text-red-600">Reference Code: </span>
             {referal}
           </h2>
-          <Button className="mt-4">Donate Here</Button>
+          <Button className="mt-4">
+            Donate Here
+          </Button>
         </div>
       </div>
     </>

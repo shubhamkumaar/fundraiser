@@ -1,12 +1,7 @@
-import mongoose from "mongoose";
+import mongoose,{models} from "mongoose";
 
 const userSchema = new mongoose.Schema({
     name: {
-        type: String,
-        required: true,
-        unique: true,
-    },
-    googleId: {
         type: String,
         required: true,
         unique: true,
@@ -19,10 +14,15 @@ const userSchema = new mongoose.Schema({
     profilePic: {
         type: String,
     },
+    referalCode:{
+        type: String,
+        unique: true,
+    },    
     createdAt: {
         type: Date,
         default: Date.now,
     },
+
 });
 
-export const User = mongoose.model("User", userSchema);
+export const User = models.User || mongoose.model("User", userSchema);

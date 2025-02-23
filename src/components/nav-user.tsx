@@ -36,7 +36,6 @@ export function NavUser({
     email: string;
     image: string;
   };
-  isLogin: () => void;
   setLogin: (value: boolean) => void;
 }) {
   const { isMobile } = useSidebar();

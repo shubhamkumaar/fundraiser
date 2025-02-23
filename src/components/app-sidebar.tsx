@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import {
   ShieldQuestion,
   Home,
@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { NavUser } from "@/components/nav-user";
 import { doSocialLogin } from "@/app/actions";
 import { useSession } from "next-auth/react";
+import { log } from "console";
 // Menu items.
 const items = [
   {
@@ -51,32 +52,33 @@ const items = [
   },
 ];
 
-type AppSidebarProps = {
-  isLogin: boolean;
-};
-type data = {
-  user: {
-    name: string;
-    email: string;
-    image: string;
-  };
-};
+
 //AppSidebar component with props
 export function AppSidebar() {
   const session = useSession();
-  
-  const [data, setData] = React.useState<data | null>(null);
+  const data = session.data;
+  const [udata, setData] = React.useState<{
+    name: string;
+    email: string;
+    image: string;
+  }>({
+    name: "",
+    email: "",
+    image: "",});
+  const [isLogin, setIsLogin] = React.useState(false);
   React.useEffect(() => {
-    if (session.data) {
-      setData(session.data);
+    if (session.data?.user) {
+      // ✅ Check if user exists
+      setData({
+        name: session.data.user.name ?? "",
+        email: session.data.user.email ?? "",
+        image: session.data.user.image ?? "",
+      });
+      setIsLogin(true); 
+    } else {
+      setIsLogin(false);
     }
-  }, [session.data]);
- const [isLogin, setIsLogin] = React.useState(false);
-  React.useEffect(() => {
-    if (session.data) {
-      setIsLogin(true);
-    }
-  }, [session.data]);
+  }, [data]);
   return (
     <Sidebar>
       <SidebarContent className="bg-[#C7DB9C]">
@@ -101,7 +103,7 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter className="bg-[#C7DB9C]">
         {isLogin ? (
-          <NavUser user={data.user} setLogin={setIsLogin}/>
+          <NavUser user={udata} setLogin={setIsLogin} />
         ) : (
           <Button
             onClick={doSocialLogin}
