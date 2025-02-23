@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
+import Link from 'next/link'
 interface User {
   _id: string;
   name: string;
@@ -25,7 +25,6 @@ interface User {
 }
 
 export default function Home() {
-  const router = useRouter();
   const { data: session } = useSession();
 
   const [user, setUser] = React.useState<User | null>(null);
@@ -75,6 +74,8 @@ export default function Home() {
   let referal = "123456";
   if (user) {
     referal = user.referalCode;
+    sessionStorage.setItem('referal', JSON.stringify(referal));
+
   }
   let totalAmount = 1000;
   const message = `Hey! Please donate on this link ${donationUrl}?referal=${referal} or my reference code ${referal}`;
@@ -160,9 +161,11 @@ export default function Home() {
             <span className="text-red-600">Reference Code: </span>
             {referal}
           </h2>
-          <Button onClick={()=>router.push('/donate')} className="mt-4">
+          <Link href={'/donate'}>
+          <Button className="mt-4">
             Donate Here
           </Button>
+          </Link>
         </div>
       </div>
     </>
