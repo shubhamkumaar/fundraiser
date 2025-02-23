@@ -14,8 +14,7 @@ import { Button } from "@/components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 import { useSession } from "next-auth/react";
-// import { useRouter } from "next/navigation";
-
+import { useRouter } from "next/router";
 interface User {
   _id: string;
   name: string;
@@ -26,7 +25,7 @@ interface User {
 }
 
 export default function Home() {
-  // const router = useRouter();
+  const router = useRouter();
   const { data: session } = useSession();
 
   const [user, setUser] = React.useState<User | null>(null);
@@ -71,7 +70,7 @@ export default function Home() {
     createUser();
   }, [session]);
 
-  let donationUrl = "localhost:3000/donate";
+  let donationUrl = "https://fundraiser-rho.vercel.app//donate";
   let userName = session?.user?.name || "Guest";
   let referal = "123456";
   if (user) {
@@ -161,7 +160,7 @@ export default function Home() {
             <span className="text-red-600">Reference Code: </span>
             {referal}
           </h2>
-          <Button className="mt-4">
+          <Button onClick={()=>router.push('/donate')} className="mt-4">
             Donate Here
           </Button>
         </div>

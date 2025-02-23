@@ -10,6 +10,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { TransactionTable } from "@/components/table";
 export default function Transaction() {
+  
   return (
     <div>
       <div className="flex items-center gap-2 h-16 px-4">

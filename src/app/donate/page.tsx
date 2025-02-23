@@ -73,8 +73,8 @@ export default function Donate() {
         key: process.env.RAZORPAY_KEY_ID,
         amount: donater.amount,
         currency: "INR",
-        name: "name",
-        description: "description",
+        name: "BKP Fundraiser",
+        description: "Donation",
         order_id: orderId,
         handler: async function (response: any) {
           const data = {
